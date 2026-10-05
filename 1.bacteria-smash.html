@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>BACTERIA SMASH - IMRS'26</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        :root {
+            --primary-maroon: #641C2D;
+            --dark-maroon: #42121F;
+            --cream: #F2E6D3;
+            --off-white: #FAF6EF;
+            --charcoal: #171517;
+            --gold: #B08A4A;
+            --accent-light: #E8D4C4;
+            --safe-area-top: env(safe-area-inset-top, 0px);
+            --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background: var(--charcoal);
+            color: var(--off-white);
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            padding-top: var(--safe-area-top);
+            padding-bottom: var(--safe-area-bottom);
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ============ LANDING SCREEN ============ */
+        #landingScreen {
+            text-align: center;
+            gap: 30px;
+        }
+
+        .logo-section {
+            margin-top: 20px;
+        }
+
+        .imrs-logo {
+            font-family: 'Cinzel', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .game-title {
+            font-family: 'Cinzel', serif;
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--cream);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin: 20px 0;
+            line-height: 1.2;
+        }
+
+        .game-subtitle {
+            font-size: 18px;
+            color: var(--accent-light);
+            line-height: 1.6;
+            max-width: 300px;
+            margin: 20px auto;
+        }
+
+        .game-instructions {
+            background: rgba(100, 28, 45, 0.3);
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 320px;
+            font-size: 14px;
+            color: var(--cream);
+            line-height: 1.8;
+            margin: 20px 0;
+        }
+
+        .start-button, .button {
+            background: linear-gradient(135deg, var(--gold), #C9A865);
+            color: var(--dark-maroon);
+            border: none;
+            border-radius: 12px;
+            padding: 16px 40px;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            box-shadow: 0 8px 20px rgba(176, 138, 74, 0.3);
+        }
+
+        .start-button:active, .button:active {
+            transform: scale(0.95);
+            box-shadow: 0 4px 10px rgba(176, 138, 74, 0.2);
+        }
+
+        .start-button:hover, .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(176, 138, 74, 0.4);
+        }
+
+        .small-text {
+            font-size: 12px;
+            color: var(--accent-light);
+            margin-top: 15px;
+        }
+
+        /* ============ COUNTDOWN SCREEN ============ */
+        #countdownScreen {
+            gap: 40px;
+        }
+
+        .countdown-number {
+            font-family: 'Cinzel', serif;
+            font-size: 120px;
+            font-weight: 900;
+            color: var(--gold);
+            line-height: 1;
+            animation: countdownPulse 1s ease-in-out;
+        }
+
+        @keyframes countdownPulse {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .countdown-text {
+            font-size: 24px;
+            color: var(--cream);
+            letter-spacing: 1px;
+        }
+
+        /* ============ GAME SCREEN ============ */
+        #gameScreen {
+            flex-direction: column;
+            padding: 0;
+        }
+
+        .game-header {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(66, 18, 31, 0.8);
+            border-bottom: 2px solid var(--gold);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-title {
+            font-family: 'Cinzel', serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 2px;
+        }
+
+        .game-stats {
+            display: flex;
+            gap: 30px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--accent-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-family: 'Cinzel', serif;
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--gold);
+        }
+
+        .game-arena {
+            flex: 1;
+            width: 100%;
+            position: relative;
+            background: linear-gradient(135deg, rgba(23, 21, 23, 0.9) 0%, rgba(66, 18, 31, 0.6) 100%);
+            overflow: hidden;
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        .bacteria {
+            position: absolute;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: none;
+            user-select: none;
+        }
+
+        .bacteria-body {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bacteria.smashing {
+            pointer-events: none;
+            animation: smashBacteria 0.5s ease-out;
+        }
+
+        @keyframes smashBacteria {
+            0% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2) rotate(-10deg);
+            }
+            100% {
+                transform: scale(0.2) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .score-popup {
+            position: absolute;
+            font-family: 'Cinzel', serif;
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--gold);
+            pointer-events: none;
+            animation: floatUp 1s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-50px) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        /* ============ RESULT SCREEN ============ */
+        #resultScreen {
+            gap: 30px;
+            text-align: center;
+        }
+
+        .result-message {
+            font-family: 'Cinzel', serif;
+            font-size: 48px;
+            font-weight: 900;
+            color: var(--cream);
+            line-height: 1.3;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .result-score {
+            font-size: 28px;
+            color: var(--gold);
+            margin: 20px 0;
+            font-weight: 700;
+        }
+
+        .result-action-message {
+            font-size: 16px;
+            color: var(--accent-light);
+            margin: 20px 0;
+        }
+
+        /* ============ NAME ENTRY SCREEN ============ */
+        #nameEntryScreen {
+            gap: 30px;
+        }
+
+        .name-entry-title {
+            font-family: 'Cinzel', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--cream);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        .name-input-group {
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .name-input {
+            width: 100%;
+            padding: 14px;
+            background: rgba(242, 230, 211, 0.1);
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            color: var(--cream);
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .name-input::placeholder {
+            color: var(--accent-light);
+        }
+
+        .name-input:focus {
+            outline: none;
+            background: rgba(242, 230, 211, 0.15);
+            border-color: var(--cream);
+            box-shadow: 0 0 20px rgba(176, 138, 74, 0.3);
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 14px 30px;
+        }
+
+        /* ============ LEADERBOARD SCREEN ============ */
+        #leaderboardScreen {
+            gap: 20px;
+        }
+
+        .leaderboard-title {
+            font-family: 'Cinzel', serif;
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .leaderboard-container {
+            width: 100%;
+            max-width: 400px;
+            background: rgba(66, 18, 31, 0.4);
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            overflow: hidden;
+            max-height: 300px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .leaderboard-entry {
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(176, 138, 74, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: var(--cream);
+            transition: background 0.3s ease;
+        }
+
+        .leaderboard-entry:last-child {
+            border-bottom: none;
+        }
+
+        .leaderboard-entry.highlight {
+            background: rgba(176, 138, 74, 0.2);
+            border-left: 4px solid var(--gold);
+            padding-left: 12px;
+        }
+
+        .leaderboard-rank {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            color: var(--gold);
+            min-width: 30px;
+        }
+
+        .leaderboard-name {
+            flex: 1;
+            text-align: left;
+        }
+
+        .leaderboard-score {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .medal {
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        /* ============ REWARD SCREEN ============ */
+        #rewardScreen {
+            gap: 30px;
+            text-align: center;
+        }
+
+        .reward-emoji {
+            font-size: 80px;
+            animation: rewardBounce 1s ease-in-out infinite;
+        }
+
+        @keyframes rewardBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .reward-title {
+            font-family: 'Cinzel', serif;
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .reward-message {
+            font-size: 18px;
+            color: var(--cream);
+            line-height: 1.6;
+            max-width: 320px;
+        }
+
+        .reward-button {
+            background: linear-gradient(135deg, var(--primary-maroon), var(--dark-maroon));
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            padding: 16px 40px;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(176, 138, 74, 0.3);
+        }
+
+        .reward-button:active {
+            transform: scale(0.95);
+            box-shadow: 0 4px 10px rgba(176, 138, 74, 0.2);
+        }
+
+        .reward-button:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, var(--dark-maroon), var(--primary-maroon));
+            box-shadow: 0 12px 30px rgba(176, 138, 74, 0.4);
+        }
+
+        /* ============ RETRY SCREEN ============ */
+        #retryScreen {
+            gap: 30px;
+            text-align: center;
+        }
+
+        .retry-message {
+            font-family: 'Cinzel', serif;
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--cream);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            line-height: 1.3;
+        }
+
+        .retry-score {
+            font-size: 24px;
+            color: var(--accent-light);
+            margin: 20px 0;
+        }
+
+        .retry-text {
+            font-size: 16px;
+            color: var(--cream);
+            margin: 20px 0;
+        }
+
+        .retry-button {
+            margin-top: 20px;
+            min-width: 200px;
+        }
+
+        /* ============ LOADING ============ */
+        .loading {
+            text-align: center;
+            color: var(--gold);
+        }
+
+        .loading-text {
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(176, 138, 74, 0.3);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 480px) {
+            .game-title {
+                font-size: 32px;
+            }
+
+            .result-message {
+                font-size: 36px;
+            }
+
+            .start-button, .button {
+                padding: 14px 30px;
+                font-size: 14px;
+            }
+
+            .leaderboard-entry {
+                font-size: 13px;
+                padding: 12px 14px;
+            }
+        }
+
+        /* ============ ERROR ============ */
+        .error-message {
+            background: rgba(255, 60, 60, 0.2);
+            border: 2px solid #FF6B6B;
+            color: #FFB4B4;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin: 15px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- LANDING SCREEN -->
+    <div id="landingScreen" class="screen active">
+        <div class="logo-section">
+            <div class="imrs-logo">IMRS'26</div>
+            <div class="game-title">BACTERIA<br>SMASH</div>
+            <div class="game-subtitle">20 SECONDS<br>HOW MANY CAN YOU DESTROY?</div>
+        </div>
+        <div class="game-instructions">
+            ⚡ TAP OR CLICK to smash bacteria<br>
+            ⚡ DESTROY 21+ to unlock your reward<br>
+            ⚡ RACE AGAINST THE CLOCK
+        </div>
+        <button class="start-button" onclick="startGame()">START SMASHING</button>
+        <div class="small-text">Compete on the leaderboard • Unlock exclusive rewards</div>
+    </div>
+
+    <!-- COUNTDOWN SCREEN -->
+    <div id="countdownScreen" class="screen">
+        <div class="countdown-number" id="countdownNumber">3</div>
+        <div class="countdown-text">GET READY</div>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div id="gameScreen" class="screen">
+        <div class="game-header">
+            <div class="header-title">BACTERIA SMASH</div>
+            <div class="game-stats">
+                <div class="stat">
+                    <div class="stat-label">TIME</div>
+                    <div class="stat-value" id="timerDisplay">20</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">SCORE</div>
+                    <div class="stat-value" id="scoreDisplay">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="game-arena" id="gameArena"></div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="resultScreen" class="screen">
+        <div class="result-message" id="resultMessage">YOU WIN</div>
+        <div class="result-score" id="resultScore">Score: 0</div>
+        <div class="result-action-message" id="resultAction"></div>
+        <button class="button" onclick="proceedToNameEntry()">CONTINUE</button>
+    </div>
+
+    <!-- NAME ENTRY SCREEN -->
+    <div id="nameEntryScreen" class="screen">
+        <div class="name-entry-title">ENTER YOUR NAME</div>
+        <div class="name-input-group">
+            <input 
+                type="text" 
+                class="name-input" 
+                id="playerName" 
+                placeholder="Your name (1-20 chars)" 
+                maxlength="20"
+                autocomplete="off"
+            >
+            <div class="error-message" id="nameError" style="display:none;"></div>
+        </div>
+        <button class="button submit-button" onclick="submitScore()">SUBMIT & VIEW LEADERBOARD</button>
+    </div>
+
+    <!-- LEADERBOARD SCREEN -->
+    <div id="leaderboardScreen" class="screen">
+        <div class="leaderboard-title">LEADERBOARD</div>
+        <div class="leaderboard-container" id="leaderboardContainer">
+            <div class="loading" style="width: 100%; padding: 30px;">
+                <div class="spinner"></div>
+                <div class="loading-text">Loading scores...</div>
+            </div>
+        </div>
+        <button class="button" id="nextButton" onclick="proceedAfterLeaderboard()" style="display:none;">NEXT</button>
+    </div>
+
+    <!-- REWARD SCREEN -->
+    <div id="rewardScreen" class="screen">
+        <div class="reward-emoji">🎁</div>
+        <div class="reward-title">REWARD UNLOCKED</div>
+        <div class="reward-message">
+            YOU SMASHED YOUR WAY IN.<br><br>
+            Your IMRS'26 reward is ready.
+        </div>
+        <button class="reward-button" onclick="claimReward()">CLAIM YOUR REWARD →</button>
+        <button class="button" onclick="showLeaderboardAgain()" style="background: rgba(100,28,45,0.3); border: 2px solid var(--gold); color: var(--gold); margin-top: 10px;">View Leaderboard Again</button>
+    </div>
+
+    <!-- RETRY SCREEN -->
+    <div id="retryScreen" class="screen">
+        <div class="retry-message">SO CLOSE.</div>
+        <div class="retry-score" id="retryScore">You smashed 18 bacteria.</div>
+        <div class="retry-text">21 was the magic number.</div>
+        <button class="button retry-button" onclick="startGame()">TRY AGAIN</button>
+    </div>
+
+    <script>
+        // ============ CONFIGURATION ============
+        const SUPABASE_URL = "YOUR_SUPABASE_URL";
+        const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+        const REGISTRATION_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdV8gTgxIMo5aomh0ZpIPKC0eJZvjuv4flHZv-MAcoP1f22Gw/viewform";
+
+        // ============ GAME STATE ============
+        let gameState = {
+            score: 0,
+            timeLeft: 20,
+            gameActive: false,
+            playerName: '',
+            gameEnded: false,
+            isWon: false,
+            gameTimerId: null,
+            spawnTimerId: null,
+            spawnRate: 800,
+            bacteria: []
+        };
+
+        // ============ UTILITY FUNCTIONS ============
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function getBacteriaType() {
+            const types = [
+                { size: 45, type: 'round' },
+                { size: 50, type: 'rod' },
+                { size: 48, type: 'spiral' },
+                { size: 52, type: 'irregular' }
+            ];
+            return types[Math.floor(Math.random() * types.length)];
+        }
+
+        function createBacteriaHTML(type) {
+            const size = type.size;
+            if (type.type === 'round') {
+                return `
+                    <svg width="${size}" height="${size}" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="25" cy="25" r="20" fill="#B08A4A" stroke="#F2E6D3" stroke-width="2"/>
+                        <circle cx="18" cy="20" r="3" fill="#42121F"/>
+                        <circle cx="32" cy="20" r="3" fill="#42121F"/>
+                        <circle cx="25" cy="28" r="2" fill="#42121F"/>
+                    </svg>
+                `;
+            } else if (type.type === 'rod') {
+                return `
+                    <svg width="${size}" height="${size}" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="15" y="12" width="20" height="26" rx="10" fill="#B08A4A" stroke="#F2E6D3" stroke-width="2"/>
+                        <circle cx="20" cy="18" r="2" fill="#42121F"/>
+                        <circle cx="30" cy="18" r="2" fill="#42121F"/>
+                        <circle cx="25" cy="32" r="2" fill="#42121F"/>
+                    </svg>
+                `;
+            } else if (type.type === 'spiral') {
+                return `
+                    <svg width="${size}" height="${size}" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+                        <g transform="translate(25, 25)">
+                            <path d="M 0 -15 Q 10 -10 10 0 Q 10 10 0 12 Q -10 10 -10 0" fill="#B08A4A" stroke="#F2E6D3" stroke-width="2" stroke-linejoin="round"/>
+                            <circle cx="0" cy="-12" r="2" fill="#42121F"/>
+                            <circle cx="8" cy="0" r="2" fill="#42121F"/>
+                            <circle cx="-8" cy="0" r="2" fill="#42121F"/>
+                        </g>
+                    </svg>
+                `;
+            } else {
+                return `
+                    <svg width="${size}" height="${size}" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 25 10 L 35 20 L 38 35 L 25 40 L 12 35 L 15 20 Z" fill="#B08A4A" stroke="#F2E6D3" stroke-width="2"/>
+                        <circle cx="22" cy="22" r="2" fill="#42121F"/>
+                        <circle cx="28" cy="22" r="2" fill="#42121F"/>
+                        <circle cx="25" cy="30" r="2" fill="#42121F"/>
+                    </svg>
+                `;
+            }
+        }
+
+        // ============ GAME FUNCTIONS ============
+        function startGame() {
+            gameState.score = 0;
+            gameState.timeLeft = 20;
+            gameState.gameActive = false;
+            gameState.gameEnded = false;
+            gameState.bacteria = [];
+
+            showScreen('countdownScreen');
+            
+            let countdown = 3;
+            const countdownDisplay = document.getElementById('countdownNumber');
+            
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                if (countdown >= 0) {
+                    countdownDisplay.textContent = countdown || 'SMASH!';
+                } else {
+                    clearInterval(countdownInterval);
+                    initializeGame();
+                }
+            }, 1000);
+        }
+
+        function initializeGame() {
+            showScreen('gameScreen');
+            gameState.gameActive = true;
+            gameState.gameEnded = false;
+            
+            updateDisplay();
+            
+            // Timer countdown
+            gameState.gameTimerId = setInterval(() => {
+                gameState.timeLeft--;
+                updateDisplay();
+                
+                if (gameState.timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+
+            // Bacteria spawning with difficulty increase
+            spawnBacteria();
+        }
+
+        function spawnBacteria() {
+            if (!gameState.gameActive) return;
+
+            const bacteriaType = getBacteriaType();
+            const arena = document.getElementById('gameArena');
+            
+            if (!arena) return;
+
+            const bacterium = document.createElement('div');
+            bacterium.className = 'bacteria';
+            bacterium.innerHTML = createBacteriaHTML(bacteriaType);
+            
+            // Random position
+            const x = Math.random() * (arena.clientWidth - bacteriaType.size);
+            const y = Math.random() * (arena.clientHeight - bacteriaType.size);
+            bacterium.style.left = x + 'px';
+            bacterium.style.top = y + 'px';
+            bacterium.style.width = bacteriaType.size + 'px';
+            bacterium.style.height = bacteriaType.size + 'px';
+
+            bacterium.addEventListener('pointerdown', (e) => {
+                e.preventDefault();
+                if (!bacterium.classList.contains('smashing')) {
+                    smashBacteria(bacterium);
+                }
+            });
+
+            arena.appendChild(bacterium);
+            gameState.bacteria.push(bacterium);
+
+            // Remove after 3 seconds if not smashed
+            setTimeout(() => {
+                if (bacterium.parentElement && !bacterium.classList.contains('smashing')) {
+                    bacterium.remove();
+                }
+            }, 3000);
+
+            // Schedule next spawn with increasing difficulty
+            const spawnDelay = Math.max(300, gameState.spawnRate - (20 - gameState.timeLeft) * 30);
+            gameState.spawnTimerId = setTimeout(() => spawnBacteria(), spawnDelay);
+        }
+
+        function smashBacteria(element) {
+            gameState.score++;
+            updateDisplay();
+
+            element.classList.add('smashing');
+
+            // Score popup
+            const popup = document.createElement('div');
+            popup.className = 'score-popup';
+            popup.textContent = '+1';
+            popup.style.left = element.style.left;
+            popup.style.top = element.style.top;
+            document.getElementById('gameArena').appendChild(popup);
+
+            setTimeout(() => {
+                element.remove();
+                popup.remove();
+            }, 500);
+        }
+
+        function updateDisplay() {
+            document.getElementById('timerDisplay').textContent = gameState.timeLeft;
+            document.getElementById('scoreDisplay').textContent = gameState.score;
+        }
+
+        function endGame() {
+            gameState.gameActive = false;
+            gameState.gameEnded = true;
+            clearInterval(gameState.gameTimerId);
+            clearInterval(gameState.spawnTimerId);
+
+            // Remove all bacteria
+            document.querySelectorAll('.bacteria').forEach(b => b.remove());
+
+            gameState.isWon = gameState.score >= 21;
+
+            if (gameState.isWon) {
+                showResultScreen();
+            } else {
+                showRetryScreen();
+            }
+        }
+
+        function showResultScreen() {
+            const resultMessage = document.getElementById('resultMessage');
+            const resultScore = document.getElementById('resultScore');
+            const resultAction = document.getElementById('resultAction');
+
+            if (gameState.score >= 21) {
+                resultMessage.textContent = 'YOU WIN!';
+                resultAction.textContent = 'Proceed to claim your reward.';
+            }
+
+            resultScore.textContent = `Score: ${gameState.score}`;
+            showScreen('resultScreen');
+        }
+
+        function showRetryScreen() {
+            const retryScore = document.getElementById('retryScore');
+            retryScore.textContent = `You smashed ${gameState.score} bacteria.`;
+            showScreen('retryScreen');
+        }
+
+        function proceedToNameEntry() {
+            document.getElementById('playerName').value = '';
+            document.getElementById('nameError').style.display = 'none';
+            showScreen('nameEntryScreen');
+        }
+
+        // ============ LEADERBOARD FUNCTIONS ============
+        async function submitScore() {
+            const nameInput = document.getElementById('playerName');
+            const name = nameInput.value.trim();
+            const errorDiv = document.getElementById('nameError');
+
+            // Validation
+            if (!name) {
+                errorDiv.textContent = 'Please enter your name.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (name.length < 1 || name.length > 20) {
+                errorDiv.textContent = 'Name must be 1-20 characters.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            gameState.playerName = name;
+
+            // Submit to Supabase
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/scores`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        score: gameState.score
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to submit score');
+                }
+
+                // Load and display leaderboard
+                await loadLeaderboard();
+            } catch (error) {
+                console.error('Error submitting score:', error);
+                errorDiv.textContent = 'Error submitting score. Please try again.';
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        async function loadLeaderboard() {
+            showScreen('leaderboardScreen');
+
+            try {
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/scores?order=score.desc&limit=100`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                        }
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch leaderboard');
+                }
+
+                const scores = await response.json();
+                displayLeaderboard(scores);
+            } catch (error) {
+                console.error('Error loading leaderboard:', error);
+                const container = document.getElementById('leaderboardContainer');
+                container.innerHTML = '<div class="error-message" style="margin: 30px; width: auto;">Unable to load leaderboard. Please check your Supabase configuration.</div>';
+            }
+        }
+
+        function displayLeaderboard(scores) {
+            const container = document.getElementById('leaderboardContainer');
+            const medals = ['🥇', '🥈', '🥉'];
+
+            if (scores.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--accent-light);">Be the first to join the leaderboard!</div>';
+            } else {
+                container.innerHTML = scores.map((entry, index) => {
+                    const isUserScore = entry.name === gameState.playerName && entry.score === gameState.score;
+                    const medal = index < 3 ? medals[index] : (index + 1) + '.';
+                    return `
+                        <div class="leaderboard-entry ${isUserScore ? 'highlight' : ''}">
+                            <span class="leaderboard-rank">${medal}</span>
+                            <span class="leaderboard-name">${escapeHtml(entry.name)}</span>
+                            <span class="leaderboard-score">${entry.score}</span>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            document.getElementById('nextButton').style.display = gameState.isWon ? 'block' : 'none';
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        function proceedAfterLeaderboard() {
+            if (gameState.isWon) {
+                showScreen('rewardScreen');
+            }
+        }
+
+        function showLeaderboardAgain() {
+            loadLeaderboard();
+        }
+
+        // ============ REWARD FUNCTIONS ============
+        function claimReward() {
+            window.open(REGISTRATION_URL, '_blank');
+        }
+
+        // ============ INITIALIZATION ============
+        function checkConfiguration() {
+            if (SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY') {
+                console.warn('Supabase configuration not set. Leaderboard will not work.');
+                console.warn('Please update SUPABASE_URL and SUPABASE_ANON_KEY in the script.');
+            }
+        }
+
+        // Prevent scrolling during gameplay
+        document.addEventListener('touchmove', (e) => {
+            if (gameState.gameActive) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Check configuration on load
+        window.addEventListener('load', checkConfiguration);
+    </script>
+</body>
+</html>
